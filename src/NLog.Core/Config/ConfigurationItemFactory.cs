@@ -66,7 +66,7 @@ namespace NLog.Config
         private readonly Factory<LayoutRenderer, AmbientPropertyAttribute> _ambientProperties;
         private readonly Factory<TimeSource, TimeSourceAttribute> _timeSources;
 
-        private IJsonConverter _jsonSerializer = DefaultJsonSerializer.Instance;
+      //TODO  private IJsonConverter _jsonSerializer = DefaultJsonSerializer.Instance;
 
         /// <summary>
         /// Called before the assembly will be loaded.
@@ -165,14 +165,15 @@ namespace NLog.Config
         /// <value>The ambient property factory.</value>
         public INamedItemFactory<LayoutRenderer, Type> AmbientProperties => _ambientProperties;
 
-        /// <summary>
-        /// Gets or sets the JSON serializer to use with <see cref="WebServiceTarget"/> or <see cref="JsonLayout"/>
-        /// </summary>
-        public IJsonConverter JsonConverter
-        {
-            get => _jsonSerializer;
-            set => _jsonSerializer = value ?? DefaultJsonSerializer.Instance;
-        }
+        //todo
+        ///// <summary>
+        ///// Gets or sets the JSON serializer to use with <see cref="WebServiceTarget"/> or <see cref="JsonLayout"/>
+        ///// </summary>
+        //public IJsonConverter JsonConverter
+        //{
+        //    get => _jsonSerializer;
+        //    set => _jsonSerializer = value ?? DefaultJsonSerializer.Instance;
+        //}
 
         /// <summary>
         /// Gets or sets the string serializer to use with <see cref="LogEventInfo.MessageTemplateParameters"/>

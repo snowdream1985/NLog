@@ -1,85 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-
-    <TargetFrameworks Condition=" '$(TargetFrameworks)' == '' ">net45;net40-client;net35;netstandard1.3;netstandard1.5;netstandard2.0</TargetFrameworks>
-
-    <Title>NLog for .NET Framework and .NET Standard</Title>
-    <Company>NLog</Company>
-    <Description>NLog is a logging platform for .NET with rich log routing and management capabilities.
-NLog supports traditional logging, structured logging and the combination of both.
-
-Supported platforms:
-
-- .NET Framework 3.5, 4, 4.5, 4.6, 4.7 &amp; 4.8
-- .NET Standard 1.3+ and 2.0+;
-- .NET Framework 4 client profile
-- Xamarin Android, Xamarin iOs
-- UWP
-- Windows Phone 8
-- Silverlight 4 and 5
-- Mono 4
-
-For ASP.NET Core, check: https://www.nuget.org/packages/NLog.Web.AspNetCore
-    
-    </Description>
-    <Product>NLog v$(ProductVersion)</Product>
-    <InformationalVersion>$(ProductVersion)</InformationalVersion>
-    <Authors>Jarek Kowalski,Kim Christensen,Julian Verdurmen</Authors>
-    <CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
-    <Copyright>Copyright (c) 2004-$(CurrentYear) NLog Project - https://nlog-project.org/ </Copyright>
-    
-    <PackageReleaseNotes>
-
-Bugfixes:
-
-- NLog.Schema: Added missing defaultAction attribute on filters element in XSD (@304NotModified)
-- AsyncWrapper in Blocking Mode can cause deadlock (@snakefoot)
-
-Features:
-
-- Added "Properties" property on Logger for reading and editing properties.(@snakefoot, @304NotModified)
-- ${all-event-properties}: Added IncludeEmptyValues option (@304NotModified)
-- ${when}, support for non-string values (@304NotModified)
-- ${whenEmpty} support for non-string values (@snakefoot, @304NotModified)
-- Added ${environment-user} (@snakefoot)
-- Log4JXmlEventLayout - Added support for configuration of Parameters (@snakefoot)
-- LoggingConfigurationParser - Recognize LoggingRule.RuleName property (@snakefoot)
-
-Improvements:
-
-- Update package descriptions to note the issues with &lt;PackageReference&gt; (@304NotModified)
-- Various XSD improvements (NLog.Schema package) (@304NotModified)
-
-Performance:
-
-- ${whenEmpty} faster rendering of string values (@snakefoot, @304NotModified)
-- FilteringTargetWrapper: Add support for batch writing (@snakefoot, @304NotModified)
-- PostFilteringTargetWrapper: performance optimizations (@snakefoot, @304NotModified)
-- Async / buffering wrapper: Improve performance when blocking (@snakefoot)
-- ObjectReflectionCache - Skip property-reflection for IFormattable (@snakefoot)
-
-Full changelog: https://github.com/NLog/NLog/blob/master/CHANGELOG.md
-
-For all config options and platform support, check https://nlog-project.org/config/
-
-    </PackageReleaseNotes>
-    <PackageTags>NLog;logging;log;structured;tracing;logfiles;database;eventlog;email;wcf;console</PackageTags>
-    <PackageIconUrl>https://nlog-project.org/N.png</PackageIconUrl>
-    <PackageProjectUrl>https://nlog-project.org/</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/NLog/NLog/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/NLog/NLog.git</RepositoryUrl>
-
-    <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
-    <AssemblyOriginatorKeyFile>..\NLog.snk</AssemblyOriginatorKeyFile>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TreatWarningsAsErrors Condition=" '$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'netstandard2.0' ">true</TreatWarningsAsErrors>
+    <TargetFrameworks>netstandard2.0;netstandard1.3;net35;net45</TargetFrameworks>
+    <RootNamespace>NLog</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NLog.Abstractions\NLog.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Common\InternalLogger-generated.cs">
+      <DependentUpon>InternalLogger-generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Internal\LayoutHelpers-generated.cs">
+      <DependentUpon>LayoutHelpers-generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Logger-generated.cs">
+      <DependentUpon>Logger-generated.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Common\InternalLogger-generated.tt">
+      <LastGenOutput>InternalLogger-generated.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Internal\LayoutHelpers-generated.tt">
+      <LastGenOutput>LayoutHelpers-generated.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Logger-generated.tt">
+      <LastGenOutput>Logger-generated.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Title>NLog for .NET Framework 4.5</Title>
@@ -97,23 +68,21 @@ For all config options and platform support, check https://nlog-project.org/conf
     <DebugType Condition=" '$(Configuration)' == 'Debug' ">Full</DebugType>
     <DefineConstants>$(DefineConstants);NET4_0;DYNAMIC_OBJECT</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
     <Title>NLog for .NET Framework 3.5</Title>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <DebugType Condition=" '$(Configuration)' == 'Debug' ">Full</DebugType>
     <DefineConstants>$(DefineConstants);NET3_5</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <Title>NLog for NetStandard 1.3</Title>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <DefineConstants>$(DefineConstants);NET4_5;NETSTANDARD;NETSTANDARD1_0;NETSTANDARD1_3</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
     <Title>NLog for NetStandard 1.5</Title>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
     <DefineConstants>$(DefineConstants);NET4_5;NETSTANDARD;NETSTANDARD1_0;NETSTANDARD1_5</DefineConstants>
   </PropertyGroup>
 
@@ -121,7 +90,7 @@ For all config options and platform support, check https://nlog-project.org/conf
     <Title>NLog for NetStandard 2.0</Title>
     <DefineConstants>$(DefineConstants);NET4_5;NETSTANDARD;NETSTANDARD2_0;DYNAMIC_OBJECT</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(monobuild)' != '' ">
     <Title>$(Title) - Mono</Title>
     <DefineConstants>$(DefineConstants);MONO</DefineConstants>
@@ -184,62 +153,42 @@ For all config options and platform support, check https://nlog-project.org/conf
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <DefineConstants>$(DefineConstants);__IOS__</DefineConstants>
   </PropertyGroup>
-  
+
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40-client' ">
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'sl4' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Browser" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'sl5' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Browser" />
-  </ItemGroup> 
+  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'wp8' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Windows" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'monoandroid44' ">
@@ -247,67 +196,24 @@ For all config options and platform support, check https://nlog-project.org/conf
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'xamarinios10' ">
     <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.1.0 " />
-    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.1.0" />
-    <PackageReference Include="System.Data.Common" Version="4.1.0" />
-    <PackageReference Include="System.Diagnostics.Process" Version="4.1.0" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.0.1" />
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
-    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.0.0" />
-    <PackageReference Include="System.Net.NameResolution" Version="4.0.0" />
-    <PackageReference Include="System.Net.Requests" Version="4.0.11" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.1.0" />
-    <PackageReference Include="System.Runtime.Loader" Version="4.0.0" />
-    <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-    <PackageReference Include="System.Xml.XmlDocument" Version="4.0.1" />
   </ItemGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.0.0" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.1.0" />
-    <PackageReference Include="System.Data.Common" Version="4.1.0" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.0.1" />
-    <PackageReference Include="System.Net.NameResolution" Version="4.0.0" />
-    <PackageReference Include="System.Net.Requests" Version="4.0.11" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.1.0" />
-    <PackageReference Include="System.Xml.XmlDocument" Version="4.0.1" />
   </ItemGroup>
-  
+
   <ItemGroup Condition=" '$(monobuild)' != '' ">
     <Reference Include="Mono.Posix" />
   </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\NLog.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\NLog.Abstractions\NLog.Abstractions.csproj" />
-    <ProjectReference Include="..\NLog.AppConfigFile\NLog.AppConfigFile.csproj" />
-    <ProjectReference Include="..\NLog.Core\NLog.Core.csproj" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <AssemblyTitle>$(Title)</AssemblyTitle>
-    <!-- SonarQube WARNING: The following projects do not have a valid ProjectGuid and were not built using a valid solution (.sln) thus will be skipped from analysis… -->
-    <ProjectGuid>{A0BFF0DB-ED9A-4639-AE86-8E709A1EFC66}</ProjectGuid>
-  </PropertyGroup>
-
 </Project>
